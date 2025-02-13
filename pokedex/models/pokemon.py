@@ -1,40 +1,9 @@
-import utils
-from dataclasses import dataclass
 from typing import Optional, List, Dict, Any
 
-# --------------------------
-# 1. MetaResource Metaclass
-# --------------------------
-class MetaResource(type):
-    def __new__(cls, name, bases, clsdict):
-        clsobj = super().__new__(cls, name, bases, clsdict)
-        return dataclass(clsobj, init=False)
+from .resource import Resource
+from . import utils
 
-# --------------------------
-# 2. Resource Class
-# --------------------------
-class Resource(metaclass=MetaResource):
-    """A resource with a name and id"""
 
-    id: int
-    name: str
-
-    __slots__ = ('id', 'name')
-
-    def __init__(self, *, id: int, name: str):
-        self.id = id
-        self.name = name
-
-    def __eq__(self, other: object) -> bool:
-        return (
-            isinstance(other, self.__class__)
-            and other.id == self.id
-            and other.name == self.name
-        )
-
-# --------------------------
-# 3. Dependent Classes
-# --------------------------
 class PokemonBaseStats:
     __slots__ = ("health_points", "attack", "defense", "special_attack", "special_defense", "speed")
 
@@ -53,6 +22,10 @@ class PokemonBaseStats:
         self.special_attack = special_attack
         self.special_defense = special_defense
         self.speed = speed
+        
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
 
 class PokemonSprites:
     __slots__ = ("normal", "shiny")
@@ -61,20 +34,29 @@ class PokemonSprites:
         self.normal = normal
         self.shiny = shiny
 
-class PokemonEvolveTo(Resource):
-    __slots__ = ("min_level",)
+    def __repr__(self):
+        return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
 
-    def __init__(self, *, id: int, name: str, min_level: int):
+class PokemonEvolveTo(Resource):
+    __slots__ = ("id", "name", "min_level")
+
+    def __init__(self, id: int, name: str, min_level: int):
         super().__init__(id=id, name=name)
         self.min_level = min_level
 
-class PokemonLearnableMovesByMethod(Resource):
-    __slots__ = ("min_level", "version")
+    def __repr__(self):
+        return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
 
-    def __init__(self, *, id: int, name: str, min_level: int, version: str):
+class PokemonLearnableMovesByMethod(Resource):
+    __slots__ = ("id", "name", "min_level", "version")
+
+    def __init__(self, id: int, name: str, min_level: int, version: str):
         super().__init__(id=id, name=name)
         self.min_level = min_level
         self.version = version
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
 
 class PokemonLearnableMoves:
     __slots__ = ("level_up", "machine", "egg")
@@ -84,19 +66,18 @@ class PokemonLearnableMoves:
         self.machine = [PokemonLearnableMovesByMethod(**move) for move in machine]
         self.egg = [PokemonLearnableMovesByMethod(**move) for move in egg]
 
-# --------------------------
-# 4. Pokemon Class
-# --------------------------
+    def __repr__(self):
+        return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
+
 class Pokemon(Resource):
     __slots__ = (
-        "is_legendary", "is_mythical", "appear_rate", "capture_rate", "gender_rate",
+        "id", "name", "is_legendary", "is_mythical", "appear_rate", "capture_rate", "gender_rate",
         "growth_rate", "evolves_from", "evolves_to", "types", "base_stats", "ev_yields",
         "learnable_moves", "sprites", "regions"
     )
 
     def __init__(
         self,
-        *,
         id: int,
         name: str,
         is_legendary: bool,
@@ -112,12 +93,9 @@ class Pokemon(Resource):
         ev_yields: Dict[str, int],
         sprites: Dict[str, str],
         regions: List[str],
-        learnable_moves: Dict[str, List[Dict[str, Any]]]
+        learnable_moves: List[Dict[str, Any]]
     ):
-        # Initialize Resource with id and name
         super().__init__(id=id, name=name)
-        
-        # Initialize other attributes
         self.is_legendary = is_legendary
         self.is_mythical = is_mythical
         self.appear_rate = appear_rate
@@ -131,10 +109,7 @@ class Pokemon(Resource):
         self.base_stats = PokemonBaseStats(**base_stats)
         self.ev_yields = ev_yields
         self.regions = [utils.get_region(region) for region in regions]
-
-        # Exclude tutor moves from learnable_moves
-        filtered_moves = {k: v for k, v in learnable_moves.items() if k != "tutor"}
-        self.learnable_moves = PokemonLearnableMoves(**filtered_moves)
+        self.learnable_moves = PokemonLearnableMoves(**learnable_moves)
 
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
