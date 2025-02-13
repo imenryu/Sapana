@@ -8,7 +8,7 @@ XDG_DATABASE_HOME = f'{BOT_ROOT_PATH}/src/database'
 XDG_LOCALES_HOME = f'{BOT_ROOT_PATH}/src/locales'
 
 DEFAULT_CONFIG_PATH = f'{XDG_CONFIG_HOME}/configuration.toml'
-DEFAULT_LOCALES_PATH = f'{XDG_LOCALES_HOME}/locales.toml'
+DEFAULT_LOCALES_PATH = f'{XDG_LOCALES_HOME}/locales.yaml'
 
 DEFAULT_CONFIG_TEMPLATE = {
     "telegram": {
