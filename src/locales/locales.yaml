@@ -1,0 +1,34 @@
+general:
+  invalid_user_id: 'User ID must be a non-negative number.'
+  invalid_user_format: 'Invalid user ID or username format.'
+
+start:
+  greeting: 'Hey There'
+  choose_starter_pokemon: 'Choose your starter pokemon'
+
+pokedex:
+  pokemon_about: |
+    <b><u>About</u></b>
+
+    Pokedex No. {id}
+    Name: {name}
+    Types: {type}
+    Growth rate: {growth_rate}
+    Regions found: {region}
+  pokemon_learnable_moves: |
+    Name: {name}
+    Power: {power}, Accuracy: {accuracy}
+    Min. Level: {min_level}
+  pokemon_basestats: |
+    <b><u>Base-Stats</u></b>
+    HP: {0.health_points}
+    Attack: {0.attack}
+    Defense: {0.defense}
+    Sp. Attack: {0.special_attack}
+    Sp. Defense: {0.special_defense}
+    Speed: {0.speed}
+  pokemon_ev_yields: 'if you defeate {name}, your pokemon will gain following EV points:{evs}'
+  similar_pokemon: 'Did you mean?'
+
+sudoers:
+  privileges_usage: "Usage: /sudo <action> <user_id/@username> or reply to a user's message."
