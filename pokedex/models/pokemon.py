@@ -1,4 +1,5 @@
 from typing import Optional, List, Dict, Any
+
 from .resource import Resource
 from . import utils
 
@@ -21,10 +22,10 @@ class PokemonBaseStats:
         self.special_attack = special_attack
         self.special_defense = special_defense
         self.speed = speed
+        
 
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
-
 
 class PokemonSprites:
     __slots__ = ("normal", "shiny")
@@ -36,7 +37,6 @@ class PokemonSprites:
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
 
-
 class PokemonEvolveTo(Resource):
     __slots__ = ("id", "name", "min_level")
 
@@ -46,7 +46,6 @@ class PokemonEvolveTo(Resource):
 
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
-
 
 class PokemonLearnableMovesByMethod(Resource):
     __slots__ = ("id", "name", "min_level", "version")
@@ -59,7 +58,6 @@ class PokemonLearnableMovesByMethod(Resource):
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
 
-
 class PokemonLearnableMoves:
     __slots__ = ("level_up", "machine", "egg")
 
@@ -70,7 +68,6 @@ class PokemonLearnableMoves:
 
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
-
 
 class Pokemon(Resource):
     __slots__ = (
@@ -98,9 +95,7 @@ class Pokemon(Resource):
         regions: List[str],
         learnable_moves: Dict[str, List[Dict[str, Any]]]
     ):
-        # Initialize the Resource class with id and name
         super().__init__(id=id, name=name)
-
         self.is_legendary = is_legendary
         self.is_mythical = is_mythical
         self.appear_rate = appear_rate
@@ -115,11 +110,9 @@ class Pokemon(Resource):
         self.ev_yields = ev_yields
         self.regions = [utils.get_region(region) for region in regions]
 
-        # Ensure learnable_moves has the required keys
-        if not all(key in learnable_moves for key in ["level_up", "machine", "egg"]):
-            raise ValueError("learnable_moves must contain 'level_up', 'machine', and 'egg' keys")
-
-        self.learnable_moves = PokemonLearnableMoves(**learnable_moves)
+        # Exclude tutor moves from learnable_moves
+        filtered_moves = {k: v for k, v in learnable_moves.items() if k != "tutor"}
+        self.learnable_moves = PokemonLearnableMoves(**filtered_moves)
 
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
