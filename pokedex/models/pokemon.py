@@ -1,9 +1,23 @@
 from typing import Optional, List, Dict, Any
-
 from .resource import Resource
 from . import utils
 
+# --------------------------
+# 1. Update the Resource Class
+# --------------------------
+class Resource:
+    __slots__ = ("id", "name")
 
+    def __init__(self, id: int, name: str):
+        self.id = id
+        self.name = name
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}(id={self.id}, name={self.name})"
+
+# --------------------------
+# 2. Update Dependent Classes
+# --------------------------
 class PokemonBaseStats:
     __slots__ = ("health_points", "attack", "defense", "special_attack", "special_defense", "speed")
 
@@ -22,10 +36,6 @@ class PokemonBaseStats:
         self.special_attack = special_attack
         self.special_defense = special_defense
         self.speed = speed
-        
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
 
 class PokemonSprites:
     __slots__ = ("normal", "shiny")
@@ -34,29 +44,20 @@ class PokemonSprites:
         self.normal = normal
         self.shiny = shiny
 
-    def __repr__(self):
-        return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
-
 class PokemonEvolveTo(Resource):
-    __slots__ = ("id", "name", "min_level")
+    __slots__ = ("min_level",)
 
     def __init__(self, id: int, name: str, min_level: int):
-        super().__init__(id=id, name=name)
+        super().__init__(id, name)  # Pass id and name to Resource
         self.min_level = min_level
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
 
 class PokemonLearnableMovesByMethod(Resource):
-    __slots__ = ("id", "name", "min_level", "version")
+    __slots__ = ("min_level", "version")
 
     def __init__(self, id: int, name: str, min_level: int, version: str):
-        super().__init__(id=id, name=name)
+        super().__init__(id, name)  # Pass id and name to Resource
         self.min_level = min_level
         self.version = version
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
 
 class PokemonLearnableMoves:
     __slots__ = ("level_up", "machine", "egg")
@@ -66,12 +67,12 @@ class PokemonLearnableMoves:
         self.machine = [PokemonLearnableMovesByMethod(**move) for move in machine]
         self.egg = [PokemonLearnableMovesByMethod(**move) for move in egg]
 
-    def __repr__(self):
-        return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
-
-class Pokemon:
+# --------------------------
+# 3. Update Pokemon Class
+# --------------------------
+class Pokemon(Resource):
     __slots__ = (
-        "id", "name", "is_legendary", "is_mythical", "appear_rate", "capture_rate", "gender_rate",
+        "is_legendary", "is_mythical", "appear_rate", "capture_rate", "gender_rate",
         "growth_rate", "evolves_from", "evolves_to", "types", "base_stats", "ev_yields",
         "learnable_moves", "sprites", "regions"
     )
@@ -95,7 +96,10 @@ class Pokemon:
         regions: List[str],
         learnable_moves: List[Dict[str, Any]]
     ):
-        super().__init__(id=id, name=name)
+        # Initialize Resource with id and name
+        super().__init__(id, name)
+        
+        # Initialize other attributes
         self.is_legendary = is_legendary
         self.is_mythical = is_mythical
         self.appear_rate = appear_rate
