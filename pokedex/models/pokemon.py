@@ -111,7 +111,7 @@ class Pokemon(Resource):
         ev_yields: Dict[str, int],
         sprites: Dict[str, str],
         regions: List[str],
-        learnable_moves: List[Dict[str, Any]]
+        learnable_moves: Dict[str, List[Dict[str, Any]]]
     ):
         # Initialize Resource with id and name
         super().__init__(id=id, name=name)
@@ -130,7 +130,10 @@ class Pokemon(Resource):
         self.base_stats = PokemonBaseStats(**base_stats)
         self.ev_yields = ev_yields
         self.regions = [utils.get_region(region) for region in regions]
-        self.learnable_moves = PokemonLearnableMoves(**learnable_moves)
+
+        # Exclude tutor moves from learnable_moves
+        filtered_moves = {k: v for k, v in learnable_moves.items() if k != "tutor"}
+        self.learnable_moves = PokemonLearnableMoves(**filtered_moves)
 
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
