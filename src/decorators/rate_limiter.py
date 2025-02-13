@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from hydrogram.types import Update
 
 messages_per_window = 1
-window_seconds = 2
+window_seconds = 1
 rate = Rate(
           messages_per_window,
           Duration.SECOND * window_seconds,
