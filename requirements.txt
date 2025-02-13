@@ -12,6 +12,7 @@ paspybin==1.1.0
 psutil==6.1.1
 pydantic==2.10.6
 pyrate-limiter==3.7.0
+PyYAML==6.0.2
 regex==2024.11.6
 tgcrypto==1.2.5
 tomlkit==0.13.2
