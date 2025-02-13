@@ -139,7 +139,7 @@ def get_pokemon_learnable_moves_data(user: User, pokemon: Pokemon, method: str, 
         if not move:
             continue
         caption_data = {
-            'name': f'{move.name} {move.type.value} ({move.damage_class})',
+            'name': f'{move.name} {move.type.value} ({move.damage_class.value})',
             'power': move.power,
             'accuracy': move.accuracy,
             'min_level': learnable_move.min_level
