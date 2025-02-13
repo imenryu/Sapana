@@ -1,8 +1,7 @@
 from pathlib import Path
-from typing import Optional, Self
-
+from typing import Optional, Self, Any
+import yaml
 from loguru import logger
-from tomlkit import loads
 
 from src import constants
 from src.errors import LocalesError
@@ -26,7 +25,7 @@ class Locales:
 
         locales_path = Path(loclpath)
 
-        self.locales: dict[str, Any] = loads(locales_path.read_text(encoding='utf-8'))
+        self.locales: dict[str, Any] = yaml.safe_load(locales_path.read_text(encoding='utf-8'))
         self.initialized = True
 
     @classmethod
