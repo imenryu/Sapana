@@ -1,3 +1,7 @@
+import utils
+if utils:
+    self.growth_rate = utils.get_growth_rate(growth_rate)
+
 from dataclasses import dataclass
 from typing import Optional, List, Dict, Any
 
