@@ -69,15 +69,12 @@ class PokemonLearnableMoves:
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
 
-class Pokemon(Resource):
+class Pokemon:
     __slots__ = (
         "id", "name", "is_legendary", "is_mythical", "appear_rate", "capture_rate", "gender_rate",
         "growth_rate", "evolves_from", "evolves_to", "types", "base_stats", "ev_yields",
         "learnable_moves", "sprites", "regions"
     )
-
-    class Pokemon(Resource):
-    # ... (other code)
 
     def __init__(
         self,
@@ -112,11 +109,6 @@ class Pokemon(Resource):
         self.base_stats = PokemonBaseStats(**base_stats)
         self.ev_yields = ev_yields
         self.regions = [utils.get_region(region) for region in regions]
-
-        # Remove the 'tutor' key from learnable_moves
-        if 'tutor' in learnable_moves:
-            del learnable_moves['tutor']
-
         self.learnable_moves = PokemonLearnableMoves(**learnable_moves)
 
     def __repr__(self):
