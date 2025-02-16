@@ -113,7 +113,10 @@ class Pokemon(Resource):
         self.base_stats = PokemonBaseStats(**base_stats)
         self.ev_yields = ev_yields
         self.regions = [utils.get_region(region) for region in regions]
-        self.learnable_moves = PokemonLearnableMoves(**learnable_moves)
+ 
+        learnable_moves.pop("tutor", None)  
+
+        self.learnable_moves = PokemonLearnableMoves(**learnable_moves)  
 
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(f'{stat}={getattr(self, stat)!r}' for stat in self.__slots__)})"
